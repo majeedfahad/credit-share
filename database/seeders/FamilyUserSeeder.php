@@ -10,7 +10,7 @@ class FamilyUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->createCard("غيداء", 2568, '0550033370');
+//        $this->createCard("غيداء", 2568, '0550033370');
         $this->createCard('عبدالمجيد', 3091, '0540366642');
     }
 
@@ -28,7 +28,7 @@ class FamilyUserSeeder extends Seeder
 
         $user = \App\Models\User::create([
             'name' => $userName,
-            'email' => 'aabdulmajeed16@gmail.com',
+            'email' => 'altaweel.abdulmajeed@gmail.com',
             'phone' => $phone,
             'password' => Hash::make($plainPassword),
             'default_card_id' => $card->id,   // <-- هنا
