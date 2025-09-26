@@ -51,7 +51,7 @@ class AuthController extends Controller
             return redirect('/no-card')->withCookie($cookie);
         }
 
-        return redirect("/family/view/{$cardId}")->withCookie($cookie);
+        return redirect()->route('card.show', ['card' => $cardId])->withCookie($cookie);
     }
 
     // POST /logout

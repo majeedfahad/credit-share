@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class FamilyController extends Controller
 {
-    public function index(Request $request, Card $card)
+    public function show(Request $request, Card $card)
     {
         $currentBalance = $card->current_balance;
         $payments = $card->payments()->orderByDesc('received_at')->get();

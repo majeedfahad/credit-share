@@ -25,7 +25,7 @@ class FamilyUserSeeder extends Seeder
         $plainPassword = bin2hex(random_bytes(5));
 
         $user = \App\Models\User::create([
-            'name' => 'Family Member',
+            'name' => 'غيداء',
             'email' => 'aabdulmajeed16@gmail.com',
             'phone' => $phone,
             'password' => Hash::make($plainPassword),
