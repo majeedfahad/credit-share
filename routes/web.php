@@ -17,9 +17,8 @@ Route::get('/', function () {
     if ($user && $user->default_card_id) {
         return redirect("/family/view/{$user->default_card_id}");
     }
-    // لو مافيه مستخدم أو ماحدد بطاقة، حاول اختر أول بطاقة
-    $firstCardId = \App\Models\Card::where('is_active', true)->value('id');
-    return $firstCardId ? redirect("/family/view/{$firstCardId}") : view('no-card');
+
+    return redirect('login');
 });
 
 Route::get('/family/view/{card}', [FamilyController::class,'index'])->middleware(\App\Http\Middleware\CheckPersonalToken::class);
