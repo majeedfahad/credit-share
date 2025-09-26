@@ -10,22 +10,24 @@ class FamilyUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $card = Card::first(); // أو انشئ بطاقة إذا ما فيه
-        if (!$card) {
-            $card = Card::create([
-                'name' => 'Visa - Apple Pay',
-                'last4' => '2568',
-                'type' => 'visa-applepay',
-                'current_balance' => 0,
-                'currency' => 'SAR',
-            ]);
-        }
+        $this->createCard("غيداء", 2568, '0550033370');
+        $this->createCard('عبدالمجيد', 3091, '0540366642');
+    }
 
-        $phone = '0550033370';
+    private function createCard($userName, $last4, $phone)
+    {
+        $card = Card::create([
+            'name' => "بطاقة $userName",
+            'last4' => $last4,
+            'type' => 'visa-applepay',
+            'current_balance' => 0,
+            'currency' => 'SAR',
+        ]);
+
         $plainPassword = bin2hex(random_bytes(5));
 
         $user = \App\Models\User::create([
-            'name' => 'غيداء',
+            'name' => $userName,
             'email' => 'aabdulmajeed16@gmail.com',
             'phone' => $phone,
             'password' => Hash::make($plainPassword),

@@ -12,15 +12,6 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class,'showLogin'])->name('login');
 Route::post('/login', [AuthController::class,'login']);
 
-//Route::get('/', function () {
-//    $user = auth()->user();
-//    if ($user && $user->default_card_id) {
-//        return redirect("/family/view/{$user->default_card_id}");
-//    }
-//
-//    return redirect('login');
-//});
-
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class,'logout']);
     Route::get('/', function () {
