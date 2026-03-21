@@ -15,17 +15,22 @@ class DashboardController extends Controller
     {
         $cycle = SalaryCycle::current() ?? SalaryCycle::findOrCreateForDate(now());
         
-        // Get all cards with relationships
-        $cards = Card::with("childCards")->whereNull("parent_card_id")->get();
+        // Get all cards
         $allCards = Card::all();
         
-        // Current cycle payments
-        $cyclePayments = Payment::with(["card", "category"])
-            ->where("salary_cycle_id", $cycle->id)
-            ->orderByDesc("received_at")
+        // All salary cycles with payment totals, newest first
+        $allCycles = SalaryCycle::withCount('payments')
+            ->withSum('payments', 'amount')
+            ->orderByDesc('start_date')
             ->get();
         
-        // Spending by category
+        // Payments grouped by cycle (eager load for current view)
+        $cyclePayments = Payment::with(["card", "category"])
+            ->orderByDesc("received_at")
+            ->get()
+            ->groupBy("salary_cycle_id");
+        
+        // Spending by category for current cycle
         $categorySpending = Payment::selectRaw("category_id, SUM(amount) as total")
             ->where("salary_cycle_id", $cycle->id)
             ->whereNotNull("category_id")
@@ -39,13 +44,6 @@ class DashboardController extends Controller
             ->whereNull("category_id")
             ->sum("amount");
         
-        // Daily spending for chart
-        $dailySpending = Payment::selectRaw("DATE(received_at) as date, SUM(amount) as total")
-            ->where("salary_cycle_id", $cycle->id)
-            ->groupBy("date")
-            ->orderBy("date")
-            ->get();
-        
         // Categories for classification modal
         $categories = Category::orderBy("sort_order")->get();
         
@@ -57,8 +55,8 @@ class DashboardController extends Controller
             ->get();
         
         return view("dashboard", compact(
-            "cycle", "cards", "allCards", "cyclePayments", 
-            "categorySpending", "uncategorized", "dailySpending",
+            "cycle", "allCards", "allCycles", "cyclePayments",
+            "categorySpending", "uncategorized",
             "categories", "unclassified"
         ));
     }
