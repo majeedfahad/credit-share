@@ -5,7 +5,7 @@
 <div class="max-w-4xl mx-auto px-4 py-6">
     
     {{-- Back Button --}}
-    <a href="{{ route(dashboard) }}" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 mb-6">
+    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 mb-6">
         <svg class="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
@@ -13,7 +13,7 @@
     </a>
 
     {{-- Card Header --}}
-    <div class="{{ $card->isSubCard() ? card-gradient-2 : card-gradient }} rounded-3xl p-6 text-white shadow-lg mb-6">
+    <div class="{{ $card->isSubCard() ? 'card-gradient-2' : 'card-gradient' }} rounded-3xl p-6 text-white shadow-lg mb-6">
         <div class="flex items-center justify-between mb-4">
             <span class="text-white/80">{{ $card->name }}</span>
             <span class="text-white/60 text-sm font-mono">•••• {{ $card->last4 }}</span>
@@ -53,7 +53,7 @@
                     <p class="font-bold text-red-500">-{{ number_format($payment->amount, 2) }}</p>
                     <p class="text-xs text-slate-400">{{ number_format($payment->balance_after, 2) }}</p>
                     @if(!$payment->category)
-                    <button onclick="openCategoryModal({{ $payment->id }}, {{ - }})" 
+                    <button onclick="openCategoryModal({{ $payment->id }}, '{{ addslashes($payment->merchant) }}')"
                             class="text-xs text-indigo-500 hover:underline mt-1">صنّف</button>
                     @endif
                 </div>
@@ -90,7 +90,7 @@
                 <button type="submit" class="flex-1 bg-indigo-600 text-white rounded-xl p-3 font-medium hover:bg-indigo-700">
                     حفظ
                 </button>
-                <button type="button" onclick="document.getElementById(categoryModal).classList.add(hidden)" 
+                <button type="button" onclick="document.getElementById('categoryModal').classList.add('hidden')"
                         class="flex-1 bg-slate-100 text-slate-600 rounded-xl p-3 font-medium hover:bg-slate-200">
                     إلغاء
                 </button>
