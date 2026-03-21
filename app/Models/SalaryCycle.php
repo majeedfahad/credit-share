@@ -61,13 +61,7 @@ class SalaryCycle extends Model
 
     public static function findOrCreateForDate(Carbon $date): self
     {
-        $existing = self::where("start_date", "<=", $date)
-            ->where("end_date", ">=", $date)
-            ->first();
-            
-        if ($existing) return $existing;
-        
-        // Create new cycle (25th to 24th)
+        // Calculate the expected cycle dates first
         if ($date->day >= 25) {
             $startDate = $date->copy()->day(25);
             $endDate = $date->copy()->addMonth()->day(24);
@@ -75,11 +69,16 @@ class SalaryCycle extends Model
             $startDate = $date->copy()->subMonth()->day(25);
             $endDate = $date->copy()->day(24);
         }
-        
-        return self::create([
-            "start_date" => $startDate,
-            "end_date" => $endDate,
-            "is_active" => true,
-        ]);
+
+        // Use firstOrCreate with exact dates to prevent race condition duplicates
+        return self::firstOrCreate(
+            [
+                "start_date" => $startDate,
+                "end_date" => $endDate,
+            ],
+            [
+                "is_active" => true,
+            ]
+        );
     }
 }
