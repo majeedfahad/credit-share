@@ -18,4 +18,9 @@ class Category extends Model
     {
         return $this->hasMany(MerchantCategory::class);
     }
+
+    public function budgets(): HasMany
+    {
+        return $this->hasMany(CategoryBudget::class);
+    }
 }

@@ -24,6 +24,11 @@ class SalaryCycle extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function categoryBudgets(): HasMany
+    {
+        return $this->hasMany(CategoryBudget::class);
+    }
+
     public function getTotalSpentAttribute(): float
     {
         return (float) $this->payments()->sum("amount");
