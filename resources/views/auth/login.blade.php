@@ -12,17 +12,17 @@
             <p class="text-slate-500 text-sm mt-1">تتبع مصروفاتك بسهولة</p>
         </div>
 
-        @if($errors->any())
+        @if(isset($errors) && $errors->any())
         <div class="bg-red-50 text-red-600 text-sm p-3 rounded-xl mb-4">
             {{ $errors->first() }}
         </div>
         @endif
 
-        <form method="POST" action="{{ route(login) }}">
+        <form method="POST" action="{{ route('login') }}">
             @csrf
             <div class="mb-4">
                 <label class="block text-sm text-slate-600 mb-2">رقم الجوال</label>
-                <input type="tel" name="phone" value="{{ old(phone) }}" 
+                <input type="tel" name="phone" value="{{ old('phone') }}" 
                        class="w-full border border-slate-200 rounded-xl p-3 text-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                        placeholder="05xxxxxxxx" required>
             </div>
