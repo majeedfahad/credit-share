@@ -11,3 +11,5 @@ Route::middleware([\App\Http\Middleware\CheckApiKey::class])->group(function () 
     Route::post("/payments/incoming", [\App\Http\Controllers\IncomingPaymentController::class, "store"]);
     Route::post("/payments/retry", [\App\Http\Controllers\IncomingPaymentController::class, "retry"]);
 });
+
+Route::post("/telegram/webhook", [\App\Http\Controllers\TelegramWebhookController::class, "handle"]);
