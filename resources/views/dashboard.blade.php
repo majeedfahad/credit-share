@@ -51,7 +51,7 @@
                     <svg class="w-16 h-16 transform -rotate-90">
                         <circle cx="32" cy="32" r="28" fill="none" stroke="#e2e8f0" stroke-width="6"/>
                         <circle cx="32" cy="32" r="28" fill="none" 
-                                stroke="{{ $cycle->budget_percentage > 90 ? #ef4444 : ($cycle->budget_percentage > 75 ? #f59e0b : #10b981) }}" 
+                                stroke="{{ $cycle->budget_percentage > 90 ? '#ef4444' : ($cycle->budget_percentage > 75 ? '#f59e0b' : '#10b981') }}" 
                                 stroke-width="6" stroke-linecap="round"
                                 stroke-dasharray="{{ min($cycle->budget_percentage, 100) * 1.76 }} 176"/>
                     </svg>
