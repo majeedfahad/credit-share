@@ -8,13 +8,14 @@ use Carbon\Carbon;
 
 class SalaryCycle extends Model
 {
-    protected $fillable = ["start_date", "end_date", "salary_amount", "budget", "is_active"];
+    protected $fillable = ["start_date", "end_date", "salary_amount", "budget", "budget_alert_threshold", "is_active"];
     
     protected $casts = [
         "start_date" => "date",
         "end_date" => "date",
         "salary_amount" => "decimal:2",
         "budget" => "decimal:2",
+        "budget_alert_threshold" => "integer",
         "is_active" => "boolean",
     ];
 
