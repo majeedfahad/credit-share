@@ -24,7 +24,7 @@
     <div class="glass rounded-3xl p-6 mb-6 shadow-lg shadow-slate-200/50">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-slate-700">ملخص الميزانية</h2>
-            <button onclick="document.getElementById(budgetModal).classList.remove(hidden)" 
+            <button onclick="document.getElementById('budgetModal').classList.remove('hidden')"
                     class="text-sm text-indigo-600 hover:text-indigo-800">
                 {{ $cycle->budget ? "تعديل" : "تحديد ميزانية" }}
             </button>
@@ -37,7 +37,7 @@
             </div>
             @if($cycle->budget)
             <div class="text-center p-4 bg-white/50 rounded-2xl">
-                <p class="text-2xl font-bold {{ $cycle->remaining_budget < 0 ? text-red-500 : text-emerald-600 }}">
+                <p class="text-2xl font-bold {{ $cycle->remaining_budget < 0 ? 'text-red-500' : 'text-emerald-600' }}">
                     {{ number_format($cycle->remaining_budget, 0) }}
                 </p>
                 <p class="text-xs text-slate-500 mt-1">المتبقي</p>
@@ -71,8 +71,8 @@
     {{-- Cards Grid --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         @foreach($allCards as $card)
-        <a href="{{ route(card.details, $card) }}" 
-           class="block {{ $card->isSubCard() ? card-gradient-2 : card-gradient }} rounded-3xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+        <a href="{{ route('card.details', $card) }}"
+           class="block {{ $card->isSubCard() ? 'card-gradient-2' : 'card-gradient' }} rounded-3xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
             <div class="flex items-center justify-between mb-4">
                 <span class="text-white/80 text-sm">{{ $card->name }}</span>
                 <span class="text-white/60 text-xs font-mono">•••• {{ $card->last4 }}</span>
@@ -138,7 +138,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-sm font-bold text-slate-700">{{ number_format($payment->amount, 0) }}</span>
-                    <button onclick="openCategoryModal({{ $payment->id }}, {{ - }})" 
+                    <button onclick="openCategoryModal({{ $payment->id }}, '{{ addslashes($payment->merchant) }}')"
                             class="bg-amber-100 text-amber-700 text-xs px-3 py-1 rounded-full hover:bg-amber-200">
                         صنّف
                     </button>
@@ -165,7 +165,7 @@
                 <div class="text-left">
                     <p class="text-sm font-bold text-red-500">-{{ number_format($payment->amount, 2) }}</p>
                     @if(!$payment->category)
-                    <button onclick="openCategoryModal({{ $payment->id }}, {{ - }})" 
+                    <button onclick="openCategoryModal({{ $payment->id }}, '{{ addslashes($payment->merchant) }}')"
                             class="text-xs text-indigo-500 hover:underline">صنّف</button>
                     @endif
                 </div>
@@ -179,16 +179,16 @@
 <div id="budgetModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-3xl p-6 w-full max-w-sm">
         <h3 class="text-lg font-bold text-slate-800 mb-4">تحديد الميزانية</h3>
-        <form action="{{ route(cycle.budget, $cycle) }}" method="POST">
+        <form action="{{ route('cycle.budget', $cycle) }}" method="POST">
             @csrf
-            <input type="number" name="budget" value="{{ $cycle->budget ??  }}" 
-                   class="w-full border border-slate-200 rounded-xl p-3 text-lg mb-4" 
+            <input type="number" name="budget" value="{{ $cycle->budget ?? '' }}"
+                   class="w-full border border-slate-200 rounded-xl p-3 text-lg mb-4"
                    placeholder="مثال: 25000">
             <div class="flex gap-2">
                 <button type="submit" class="flex-1 bg-indigo-600 text-white rounded-xl p-3 font-medium hover:bg-indigo-700">
                     حفظ
                 </button>
-                <button type="button" onclick="document.getElementById(budgetModal).classList.add(hidden)" 
+                <button type="button" onclick="document.getElementById('budgetModal').classList.add('hidden')"
                         class="flex-1 bg-slate-100 text-slate-600 rounded-xl p-3 font-medium hover:bg-slate-200">
                     إلغاء
                 </button>
@@ -219,7 +219,7 @@
                 <button type="submit" class="flex-1 bg-indigo-600 text-white rounded-xl p-3 font-medium hover:bg-indigo-700">
                     حفظ
                 </button>
-                <button type="button" onclick="document.getElementById(categoryModal).classList.add(hidden)" 
+                <button type="button" onclick="document.getElementById('categoryModal').classList.add('hidden')"
                         class="flex-1 bg-slate-100 text-slate-600 rounded-xl p-3 font-medium hover:bg-slate-200">
                     إلغاء
                 </button>
