@@ -13,3 +13,7 @@ Route::middleware([\App\Http\Middleware\CheckApiKey::class])->group(function () 
 });
 
 Route::post("/telegram/webhook", [\App\Http\Controllers\TelegramWebhookController::class, "handle"]);
+
+Route::middleware([\App\Http\Middleware\CheckApiKey::class])->group(function () {
+    Route::get("/system/health", [\App\Http\Controllers\SystemHealthController::class, "status"]);
+});
