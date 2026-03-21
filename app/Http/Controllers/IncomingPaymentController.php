@@ -76,6 +76,15 @@ class IncomingPaymentController extends Controller
             $card->current_balance = $newBalance;
             $card->save();
 
+            // Sync parent card balance when paying with sub-card
+            if ($card->parent_card_id) {
+                $parentCard = Card::find($card->parent_card_id);
+                if ($parentCard) {
+                    $parentCard->current_balance = bcsub((string)$parentCard->current_balance, (string)$amount, 2);
+                    $parentCard->save();
+                }
+            }
+
             DB::commit();
             return response()->json([
                 "ok" => true, 
