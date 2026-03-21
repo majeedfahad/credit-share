@@ -20,22 +20,17 @@
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
-            <div class="mb-4">
+            <div class="mb-6">
                 <label class="block text-sm text-slate-600 mb-2">رقم الجوال</label>
                 <input type="tel" name="phone" value="{{ old('phone') }}" 
                        class="w-full border border-slate-200 rounded-xl p-3 text-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                       placeholder="05xxxxxxxx" required>
-            </div>
-            <div class="mb-6">
-                <label class="block text-sm text-slate-600 mb-2">كلمة المرور</label>
-                <input type="password" name="password" 
-                       class="w-full border border-slate-200 rounded-xl p-3 text-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                       required>
+                       placeholder="05xxxxxxxx" required autofocus>
             </div>
             <button type="submit" 
                     class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-3 font-medium hover:opacity-90 transition-opacity">
-                دخول
+                إرسال رمز التحقق
             </button>
+            <p class="text-center text-slate-400 text-xs mt-4">سيتم إرسال رمز التحقق عبر تيليقرام</p>
         </form>
     </div>
 </div>
