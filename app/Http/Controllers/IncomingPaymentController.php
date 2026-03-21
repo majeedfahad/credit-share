@@ -8,6 +8,7 @@ use App\Models\Card;
 use App\Models\FailedPayment;
 use App\Models\SalaryCycle;
 use App\Models\MerchantCategory;
+use App\Services\TelegramService;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -86,6 +87,45 @@ class IncomingPaymentController extends Controller
             }
 
             DB::commit();
+
+            // Large transaction alert
+            $threshold = (float) env('LARGE_PAYMENT_THRESHOLD', 500);
+            if ($amount >= $threshold) {
+                try {
+                    $telegram = new TelegramService();
+                    $merchant = $parsed["merchant"] ?? 'غير معروف';
+                    $last4 = $card->last4;
+                    $balance = $newBalance;
+                    $telegram->sendMessage(
+                        "💰 عملية كبيرة!\n{$amount} ريال لدى {$merchant}\nالبطاقة: *{$last4}\nالرصيد: {$balance}"
+                    );
+                } catch (\Throwable $e) {
+                    \Log::warning('Large transaction alert failed: ' . $e->getMessage());
+                }
+            }
+
+            // Unclassified payment interactive classification
+            if ($payment->category_id === null) {
+                try {
+                    $telegram = $telegram ?? new TelegramService();
+                    $categories = \App\Models\Category::orderBy('sort_order')->get();
+                    $buttons = [];
+                    foreach ($categories as $cat) {
+                        $buttons[] = [
+                            'text' => ($cat->icon ?? '📁') . ' ' . $cat->name_ar,
+                            'callback_data' => "classify:{$payment->id}:{$cat->id}",
+                        ];
+                    }
+                    $merchant = $parsed["merchant"] ?? 'غير معروف';
+                    $telegram->sendMessageWithButtons(
+                        "❓ عملية غير مصنفة\n{$amount} ريال لدى {$merchant}\nاختر التصنيف:",
+                        $buttons
+                    );
+                } catch (\Throwable $e) {
+                    \Log::warning('Unclassified payment alert failed: ' . $e->getMessage());
+                }
+            }
+
             return response()->json([
                 "ok" => true, 
                 "payment_id" => $payment->id,
