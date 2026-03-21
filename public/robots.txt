@@ -1,2 +1,4 @@
 User-agent: *
-Disallow:
+Allow: /
+Crawl-delay:3
+Sitemap:https://pay.dt.sa/sitemap.xml
