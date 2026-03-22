@@ -217,11 +217,17 @@ class IncomingPaymentController extends Controller
             } elseif (mb_strpos($line, "في:") === 0) {
                 $dateStr = trim(str_replace("في:", "", $line));
                 try {
-                    $res["datetime"] = Carbon::parse($dateStr);
+                    // Al Rajhi format: d/m/y H:i (e.g. "5/3/26 18:58" = 5 March 2026)
+                    if (preg_match("/^(\d{1,2})\/(\d{1,2})\/(\d{2})\s+(\d{1,2}:\d{2})/", $dateStr, $dm)) {
+                        $res["datetime"] = Carbon::createFromFormat("j/n/y H:i", $dm[1] . "/" . $dm[2] . "/" . $dm[3] . " " . $dm[4]);
+                    } else {
+                        $res["datetime"] = Carbon::createFromFormat("j/n/y", $dateStr);
+                    }
                 } catch (\Exception $e) {}
-            } elseif (preg_match("/^؜?(\d{2}\/\d{1,2}\/\d{2})\s+(\d{1,2}:\d{2})/u", $line, $m)) {
+            } elseif (preg_match("/^؜?(\d{1,2}\/\d{1,2}\/\d{2})\s+(\d{1,2}:\d{2})/u", $line, $m)) {
                 try {
-                    $res["datetime"] = Carbon::createFromFormat("y/n/d H:i", $m[1] . " " . $m[2]);
+                    // Same Al Rajhi format: d/m/y H:i
+                    $res["datetime"] = Carbon::createFromFormat("j/n/y H:i", $m[1] . " " . $m[2]);
                 } catch (\Exception $e) {}
             } else {
                 if (!$res["description"]) {
