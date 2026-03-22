@@ -204,6 +204,12 @@ class IncomingPaymentController extends Controller
                     $res["card_last4"] = substr(trim($m[1]), -4);
                     $res["card_type"] = trim($m[2]);
                 }
+            } elseif (mb_strpos($line, "إجمالي المبلغ المستحق:") === 0 || mb_strpos($line, "اجمالي المبلغ المستحق:") === 0) {
+                // International transactions: total due in SAR (overrides foreign currency مبلغ)
+                if (preg_match("/([\d\.,]+)\s*SAR/u", $line, $m)) {
+                    $res["amount"] = (float)str_replace(",", "", $m[1]);
+                    $res["is_international"] = true;
+                }
             } elseif (mb_strpos($line, "مبلغ:") === 0) {
                 if (preg_match("/مبلغ:\s*(?:SAR\s*)?([\d\.,]+)/u", $line, $m)) {
                     $res["amount"] = (float)str_replace(",", "", $m[1]);
