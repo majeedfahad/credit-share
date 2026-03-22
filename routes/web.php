@@ -27,4 +27,7 @@ Route::middleware("auth")->group(function () {
     
     // Update payment note
     Route::post("/payment/{payment}/note", [FamilyController::class, "updateNote"])->name("payment.note");
+    
+    // Delete payment
+    Route::delete("/payment/{payment}", [DashboardController::class, "deletePayment"])->name("payment.delete");
 });

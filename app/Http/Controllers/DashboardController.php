@@ -87,6 +87,12 @@ class DashboardController extends Controller
         return back()->with("success", "تم تحديث الميزانية");
     }
     
+    public function deletePayment(Request $request, Payment $payment)
+    {
+        $payment->delete();
+        return back()->with("success", "تم حذف العملية");
+    }
+
     public function cardDetails(Request $request, Card $card)
     {
         $cycle = SalaryCycle::current();

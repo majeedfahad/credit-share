@@ -62,6 +62,13 @@
                 <p class="text-[10px] text-slate-500 bg-white rounded-lg p-2 font-mono leading-relaxed whitespace-pre-wrap" dir="rtl">{{ $payment->raw_text }}</p>
             </div>
             @endif
+            <div class="mt-2 pt-2 border-t border-slate-200 flex justify-end">
+                <form action="{{ route('payment.delete', $payment) }}" method="POST" onsubmit="return confirm('متأكد تبي تحذف هالعملية؟')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="event.stopPropagation()" class="text-[10px] text-red-400 hover:text-red-600">🗑️ حذف</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
