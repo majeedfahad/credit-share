@@ -73,6 +73,85 @@
         @endif
     </div>
 
+    {{-- Salary Cycles — Collapsible with sort toggle --}}
+    <div class="space-y-3 mb-5">
+        <h2 class="text-sm font-semibold text-slate-700">العمليات</h2>
+        
+        @foreach($allCycles as $c)
+        @php
+            $isCurrentCycle = $c->id === $cycle->id;
+            $payments = $cyclePayments->get($c->id, collect());
+            $cycleTotal = $payments->sum('amount');
+        @endphp
+        <div class="glass rounded-2xl shadow-sm overflow-hidden" x-data="{ open: {{ $isCurrentCycle ? 'true' : 'false' }}, sortBy: 'time' }">
+            {{-- Cycle Header --}}
+            <button @click="open = !open" class="w-full flex items-center justify-between p-4 text-right hover:bg-white/50 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full {{ $isCurrentCycle ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center text-xs font-bold">
+                        {{ $c->start_date->format('m') }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-700">
+                            {{ $c->start_date->format('d M') }} → {{ $c->end_date->format('d M Y') }}
+                            @if($isCurrentCycle)
+                            <span class="text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full mr-1">الحالية</span>
+                            @endif
+                        </p>
+                        <p class="text-[10px] text-slate-400">{{ $payments->count() }} عملية</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-bold text-slate-700">{{ number_format($cycleTotal, 0) }}</span>
+                    <svg :class="{ 'rotate-180': open }" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+            </button>
+
+            {{-- Payments List --}}
+            <div x-show="open" x-collapse>
+                {{-- Sort Toggle --}}
+                <div class="flex items-center gap-1 px-4 py-2 border-t border-slate-100">
+                    <span class="text-[10px] text-slate-400 ml-1">ترتيب:</span>
+                    <button @click.stop="sortBy = 'time'" 
+                            :class="sortBy === 'time' ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'"
+                            class="text-[10px] px-2 py-1 rounded-full transition-colors">
+                        🕐 الأحدث
+                    </button>
+                    <button @click.stop="sortBy = 'amount'" 
+                            :class="sortBy === 'amount' ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'"
+                            class="text-[10px] px-2 py-1 rounded-full transition-colors">
+                        💰 الأعلى
+                    </button>
+                </div>
+
+                <div class="divide-y divide-slate-50">
+                    {{-- Time-sorted list --}}
+                    <template x-if="sortBy === 'time'">
+                        <div>
+                            @forelse($payments->sortByDesc('received_at') as $payment)
+                            @include('partials.payment-row', ['payment' => $payment])
+                            @empty
+                            <div class="px-4 py-6 text-center text-xs text-slate-400">لا توجد عمليات</div>
+                            @endforelse
+                        </div>
+                    </template>
+                    {{-- Amount-sorted list --}}
+                    <template x-if="sortBy === 'amount'">
+                        <div>
+                            @forelse($payments->sortByDesc('amount') as $payment)
+                            @include('partials.payment-row', ['payment' => $payment])
+                            @empty
+                            <div class="px-4 py-6 text-center text-xs text-slate-400">لا توجد عمليات</div>
+                            @endforelse
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+
     {{-- Category Breakdown --}}
     @if($categorySpending->count() > 0)
     <div class="glass rounded-2xl p-4 mb-5 shadow-sm">
@@ -133,121 +212,6 @@
         </div>
     </div>
     @endif
-
-    {{-- Salary Cycles — Collapsible --}}
-    <div class="space-y-3 mb-8">
-        <h2 class="text-sm font-semibold text-slate-700">العمليات</h2>
-        
-        @foreach($allCycles as $c)
-        @php
-            $isCurrentCycle = $c->id === $cycle->id;
-            $payments = $cyclePayments->get($c->id, collect());
-            $cycleTotal = $payments->sum('amount');
-        @endphp
-        <div class="glass rounded-2xl shadow-sm overflow-hidden" x-data="{ open: {{ $isCurrentCycle ? 'true' : 'false' }} }">
-            {{-- Cycle Header --}}
-            <button @click="open = !open" class="w-full flex items-center justify-between p-4 text-right hover:bg-white/50 transition-colors">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full {{ $isCurrentCycle ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center text-xs font-bold">
-                        {{ $c->start_date->format('m') }}
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-slate-700">
-                            {{ $c->start_date->format('d M') }} → {{ $c->end_date->format('d M Y') }}
-                            @if($isCurrentCycle)
-                            <span class="text-[9px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full mr-1">الحالية</span>
-                            @endif
-                        </p>
-                        <p class="text-[10px] text-slate-400">{{ $payments->count() }} عملية</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-bold text-slate-700">{{ number_format($cycleTotal, 0) }}</span>
-                    <svg :class="{ 'rotate-180': open }" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </div>
-            </button>
-
-            {{-- Payments List --}}
-            <div x-show="open" x-collapse>
-                <div class="border-t border-slate-100 divide-y divide-slate-50">
-                    @forelse($payments as $payment)
-                    <div class="payment-row" onclick="togglePaymentDetail(this)">
-                        {{-- Summary Row --}}
-                        <div class="flex items-center justify-between px-4 py-2.5 hover:bg-white/50 transition-colors cursor-pointer">
-                            <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                                <span class="text-base w-6 text-center shrink-0">{{ $payment->category?->icon ?? '💳' }}</span>
-                                <div class="min-w-0">
-                                    <p class="text-xs font-medium text-slate-700 truncate">{{ $payment->merchant ?: ($payment->description ?: 'عملية دفع') }}</p>
-                                    <p class="text-[10px] text-slate-400">{{ $payment->received_at?->format('d M H:i') }} · {{ $payment->card->last4 ?? '' }}</p>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-red-500 shrink-0 mr-2">-{{ number_format($payment->amount, 2) }}</span>
-                        </div>
-                        {{-- Detail (hidden by default) --}}
-                        <div class="payment-detail hidden bg-slate-50/80 px-4 py-3 mx-3 mb-2 rounded-xl">
-                            <div class="space-y-1.5 text-[11px]">
-                                @if($payment->merchant)
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400">التاجر</span>
-                                    <span class="text-slate-600">{{ $payment->merchant }}</span>
-                                </div>
-                                @endif
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400">المبلغ</span>
-                                    <span class="text-slate-600">{{ number_format($payment->amount, 2) }} ر.س</span>
-                                </div>
-                                @if($payment->balance_after)
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400">الرصيد بعدها</span>
-                                    <span class="text-slate-600">{{ number_format($payment->balance_after, 2) }}</span>
-                                </div>
-                                @endif
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400">البطاقة</span>
-                                    <span class="text-slate-600">{{ $payment->card->name ?? '' }} ({{ $payment->card->last4 ?? '' }})</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400">التصنيف</span>
-                                    <span class="text-slate-600">
-                                        @if($payment->category)
-                                            {{ $payment->category->icon }} {{ $payment->category->name_ar }}
-                                        @else
-                                            <button onclick="event.stopPropagation(); openCategoryModal({{ $payment->id }}, '{{ addslashes($payment->merchant) }}')"
-                                                    class="text-indigo-500 hover:underline">صنّف</button>
-                                        @endif
-                                    </span>
-                                </div>
-                                @if($payment->description)
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400">الوصف</span>
-                                    <span class="text-slate-600">{{ $payment->description }}</span>
-                                </div>
-                                @endif
-                                @if($payment->note)
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400">ملاحظة</span>
-                                    <span class="text-slate-600">{{ $payment->note }}</span>
-                                </div>
-                                @endif
-                                @if($payment->raw_text)
-                                <div class="mt-2 pt-2 border-t border-slate-200">
-                                    <p class="text-slate-400 mb-1">الرسالة الأصلية</p>
-                                    <p class="text-[10px] text-slate-500 bg-white rounded-lg p-2 font-mono leading-relaxed whitespace-pre-wrap" dir="rtl">{{ $payment->raw_text }}</p>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="px-4 py-6 text-center text-xs text-slate-400">لا توجد عمليات</div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-        @endforeach
-    </div>
 </div>
 
 {{-- Budget Modal --}}
